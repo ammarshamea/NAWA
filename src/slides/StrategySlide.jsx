@@ -13,18 +13,33 @@ const listItemVariants = {
 };
 
 export default function StrategySlide() {
-  const { t, messages } = useI18n();
+  const { t, messages, isAr } = useI18n();
   const { strategy } = messages;
   const bodyFont = 'var(--font-body)';
   const headReveal = useRevealInView(VP);
   const listReveal = useRevealInView(VP);
   const presenceReveal = useRevealInView(VP);
 
+  /* مطابقة قسم الرؤية/الرسالة: أحجام وأسطر وletter-spacing حسب isAr */
+  const paraStyle = {
+    fontFamily: bodyFont,
+    fontSize: isAr ? 'clamp(14px,1.35vw,17px)' : 'clamp(13px,1.35vw,16px)',
+    lineHeight: isAr ? 1.95 : 1.85,
+    fontWeight: 400,
+  };
+
   const dotStyle = {
     width: 6, height: 6, borderRadius: '50%', background: 'var(--gold-dark)', opacity: 0.85, flexShrink: 0, marginTop: '0.55em',
   };
+  /* عرض كامل داخل الصف/العمود — لا flex-shrink أفقي يسبب حرفاً لكل سطر */
   const lineStyle = {
-    fontFamily: bodyFont, fontSize: 15, lineHeight: 1.75, color: 'var(--warm-text)', margin: 0, flex: '0 1 auto', maxWidth: 'min(100%, 36rem)', fontWeight: 400, textAlign: 'center',
+    ...paraStyle,
+    color: 'var(--warm-text)',
+    margin: 0,
+    maxWidth: '36rem',
+    width: '100%',
+    boxSizing: 'border-box',
+    textAlign: 'center',
   };
   const titleRuleStyle = (w, more = {}) => ({
     width: w,
@@ -49,16 +64,30 @@ export default function StrategySlide() {
             animate={headReveal.inView ? 'show' : 'hidden'}
             style={{ marginBottom: 20 }}
           >
-            <motion.h2 variants={fadeUp} style={{
-              fontFamily: bodyFont, fontWeight: 700,
-              fontSize: 'clamp(28px,3.5vw,50px)',
-              background: 'linear-gradient(135deg,var(--gold-light),var(--gold-dark))',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              marginBottom: 16, textAlign: 'center',
-            }}>{t('strategy.h2')}</motion.h2>
-            <motion.p variants={fadeIn} style={{
-              fontFamily: bodyFont, fontSize: 16, color: 'var(--warm-text-mid)', fontWeight: 400, lineHeight: 1.7, margin: 0,
-              textAlign: 'center', maxWidth: 'min(100%, 36rem)', marginLeft: 'auto', marginRight: 'auto',
+            <motion.h2
+              variants={fadeUp}
+              className="strategy-h2"
+              style={{
+                fontFamily: bodyFont, fontWeight: 700,
+                fontSize: 'clamp(24px,3vw,42px)',
+                letterSpacing: isAr ? 0 : 1,
+                lineHeight: isAr ? 1.35 : 1.2,
+                marginBottom: 16, textAlign: 'center',
+              }}
+            >
+              <span
+                className="vm-gradient-text"
+                style={{
+                  background: 'linear-gradient(135deg,var(--gold-light),var(--gold-dark))',
+                  WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent', WebkitTextFillColor: 'transparent',
+                }}
+              >{t('strategy.h2')}</span>
+            </motion.h2>
+            <motion.p variants={fadeIn} className="strategy-intro" style={{
+              ...paraStyle,
+              color: 'var(--warm-text-mid)', margin: 0,
+              textAlign: 'center', maxWidth: '36rem', width: '100%', boxSizing: 'border-box',
+              marginLeft: 'auto', marginRight: 'auto',
             }}>{t('strategy.intro')}</motion.p>
             <motion.div variants={fadeIn} style={titleRuleStyle(56, { marginTop: 20 })} />
           </motion.div>
@@ -76,7 +105,7 @@ export default function StrategySlide() {
                 variants={listItemVariants}
               >
                 <span aria-hidden style={dotStyle} />
-                <p style={lineStyle}>{line}</p>
+                <p className="strategy-pillar-line" style={lineStyle}>{line}</p>
               </motion.li>
             ))}
           </motion.ul>
@@ -91,16 +120,18 @@ export default function StrategySlide() {
             animate={presenceReveal.inView ? 'show' : 'hidden'}
             style={{ height: '100%' }}
           >
-            <motion.h3 variants={fadeUp} style={{
+            <motion.h3 variants={fadeUp} className="strategy-h3" style={{
               fontFamily: bodyFont, fontWeight: 700,
-              fontSize: 'clamp(22px,2.8vw,36px)',
-              color: 'var(--warm-fg)', marginBottom: 16, lineHeight: 1.3, textAlign: 'center',
+              fontSize: isAr ? 'clamp(24px,3.2vw,44px)' : 'clamp(26px,3.2vw,46px)',
+              letterSpacing: isAr ? 0 : 1,
+              lineHeight: isAr ? 1.35 : 1.2,
+              color: 'var(--warm-fg)', marginBottom: 16, textAlign: 'center',
             }}>{t('strategy.presenceTitle')}</motion.h3>
             <motion.div variants={fadeIn} style={titleRuleStyle(48, { marginBottom: 20 })} />
-            <motion.p variants={fadeUp} style={{
-              fontFamily: bodyFont, fontWeight: 400, fontSize: 15, lineHeight: 1.9,
-              color: 'var(--warm-text-mid)', margin: 0, textAlign: 'center', maxWidth: 'min(100%, 36rem)',
-              marginLeft: 'auto', marginRight: 'auto',
+            <motion.p variants={fadeUp} className="strategy-presence-body" style={{
+              ...paraStyle,
+              color: 'var(--warm-text-mid)', margin: 0, textAlign: 'center', maxWidth: '36rem', width: '100%',
+              boxSizing: 'border-box', marginLeft: 'auto', marginRight: 'auto',
             }}>{t('strategy.presenceBody')}</motion.p>
           </motion.div>
         </div>

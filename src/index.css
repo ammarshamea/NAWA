@@ -387,15 +387,17 @@ section:not(.landing-hero-wrap) {
 html[dir="rtl"] .overview-vision-mission-grid .vm-mission { grid-column: 2; }
 html[dir="rtl"] .overview-vision-mission-grid .vm-vision { grid-column: 1; }
 
-/* الاستراتيجية + الحضور والتأثير — صف واحد، محاذاة عمودية، نصوص في المنتصف */
+/* الاستراتيجية + الحضور: نفس موضع الأعمدة كالإنجليزي (يسار / يمين) حتى في وضع RTL للصفحة */
 .strategy-presence-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
+  align-items: start;
+  direction: ltr;
   gap: clamp(40px, 7.5vw, 88px);
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  min-width: 0;
   position: relative;
   z-index: 2;
   padding: 88px 7vw 96px;
@@ -403,40 +405,104 @@ html[dir="rtl"] .overview-vision-mission-grid .vm-vision { grid-column: 1; }
 }
 .strategy-presence-col {
   text-align: center;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+html[dir="rtl"] .strategy-presence-col {
+  direction: rtl;
+}
+.strategy-intro,
+.strategy-presence-body {
+  display: block;
+  width: 100%;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
 }
 .strategy-presence-pillars {
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
+  min-width: 0;
+  direction: ltr;
 }
+/* Grid: نقطة يسار والنص يمينها مثل EN؛ النص العربي داخل p بـ direction: rtl */
+html[dir="rtl"] .strategy-pillar-line {
+  direction: rtl;
+  max-width: 100% !important;
+}
+/* Grid بدل flex: نص minmax(0,1fr) يأخذ العرض ولا ينكش مثل flex-shrink */
 .strategy-presence-pillars li {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: 10px;
+  width: 100%;
+  max-width: 100%;
   margin-bottom: 14px;
+  box-sizing: border-box;
 }
 .strategy-presence-pillars li:last-child {
   margin-bottom: 0;
 }
+.strategy-presence-pillars li [aria-hidden] {
+  grid-row: 1;
+  grid-column: 1;
+  align-self: start;
+  justify-self: end;
+}
 .strategy-presence-pillars li p {
+  grid-row: 1;
+  grid-column: 2;
   text-align: center;
+  min-width: 0;
 }
 .strategy-presence-grid__strat { grid-column: 1; min-width: 0; }
 .strategy-presence-grid__presence { grid-column: 2; min-width: 0; }
-html[dir="rtl"] .strategy-presence-grid__strat { grid-column: 2; }
-html[dir="rtl"] .strategy-presence-grid__presence { grid-column: 1; }
+
+/* موبايل وتابلت ضيق: عمود واحد (واحد تحت الثاني) — LTR و RTL */
 @media (max-width: 900px) {
   .strategy-presence-grid {
     grid-template-columns: 1fr;
     align-items: stretch;
-    gap: 48px;
-    padding: 64px 7vw 80px;
+    gap: clamp(32px, 5vw, 48px);
+    padding: 56px 5vw 64px;
   }
-  html[dir="rtl"] .strategy-presence-grid__strat,
-  html[dir="rtl"] .strategy-presence-grid__presence {
+  .strategy-presence-grid__strat,
+  .strategy-presence-grid__presence {
+    grid-column: 1;
+  }
+}
+
+/* ≤600px: حشو أقل + ركائز: نقطة فوق السطر (عربي/إنجليزي) */
+@media (max-width: 600px) {
+  .strategy-presence-grid {
+    padding: 40px 4vw 48px;
+    gap: 28px;
+  }
+  .strategy-presence-col p:not(.strategy-pillar-line),
+  .strategy-presence-col h2,
+  .strategy-presence-col h3 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  .strategy-presence-pillars li {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+    column-gap: 0;
+    margin-bottom: 16px;
+  }
+  .strategy-presence-pillars li [aria-hidden] {
+    margin-top: 0;
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: center;
+  }
+  .strategy-presence-pillars li p {
+    grid-row: 2;
     grid-column: 1;
   }
 }
