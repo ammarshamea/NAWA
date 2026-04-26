@@ -44,7 +44,7 @@ jobs:
       - name: Build (npm run build) → dist/
         run: npm run build
         env:
-          GITHUB_REPOSITORY: ${{ secrets.FULL_REPO || vars.FULL_REPO || github.repository }}
+          REPOSITORY_NAME: ${{ secrets.FULL_REPO || vars.FULL_REPO || github.repository }}
           VITE_BASE: ${{ secrets.VITE_BASE || vars.VITE_BASE || format('/{0}/', github.event.repository.name) }}
 
       - name: تأكد أن مصدر النشر = مجلد dist
