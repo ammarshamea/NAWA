@@ -1,5 +1,6 @@
-# بناء Vite (dist) ونشره — لا تستخدم «Deploy from a branch» لأن index.html في الريبو يشير إلى /src/main.jsx
-# ويُفشل على Pages (404). المطلوب: نشر dist بعد npm run build فقط.
+# البناء: npm run build → ينتج dist/
+# النشر: upload-pages-artifact يرفع **محتويات dist/ فقط** — deploy يسحب نفس الأرشيف (لا جذر الريبو).
+# لا تستخدم «Deploy from a branch» (index.html المصدر يشير إلى /src/main.jsx = 404).
 #
 # GitHub: Settings → Pages → Build and deployment: Source = GitHub Actions (ليس «Deploy from a branch»)
 # بعد أول دفع ينجح: الصفحة على https://<user>.github.io/<اسم-الريبو>/
@@ -40,11 +41,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build (npm run build)
+      - name: Build (npm run build) → dist/
         run: npm run build
         env:
-          REPOSITORY_NAME: ${{ secrets.FULL_REPO || vars.FULL_REPO || github.repository }}
+          GITHUB_REPOSITORY: ${{ secrets.FULL_REPO || vars.FULL_REPO || github.repository }}
           VITE_BASE: ${{ secrets.VITE_BASE || vars.VITE_BASE || format('/{0}/', github.event.repository.name) }}
+
+      - name: تأكد أن مصدر النشر = مجلد dist
+        run: |
+          test -d dist || { echo "missing dist/"; exit 1; }
+          test -f dist/index.html || { echo "missing dist/index.html"; exit 1; }
+          echo "حجم dist:" && du -sh dist
+          echo "أهم الملفات:" && ls -la dist
 
       - name: Verify dist is production (not /src/main.jsx)
         run: |
@@ -55,11 +63,12 @@ jobs:
           echo "OK: production bundle in dist/index.html"
           grep -E "<script" dist/index.html | head -5
 
-      - name: Upload dist to GitHub Pages
+      - name: رفع dist كأرشيف GitHub Pages (هذا فقط يُنشر)
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
+  # ينشر آخر أرشيف مرفوع من build (محتويات dist/ فقط)
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -67,6 +76,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: نشر أرشيف dist إلى GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
