@@ -7,8 +7,7 @@
 #
 # متغيّرات (اختياري) — Settings → Secrets and variables → Actions
 #   لا تبدأ أسماء Secrets بـ GITHUB_ (محجوز لدى GitHub)
-#   • Variables أو Secrets: VITE_BASE = مثلاً /NAWA/  |  FULL_REPO = owner/name (لتجاوز الريبو الافتراضي)
-#   • السر/المتغير FULL_REPO يوضع في process.env باسم GITHUB_REPOSITORY للمكوّن.
+#   • Variables أو Secrets: VITE_BASE = مثلاً /NAWA/  |  REPOSITORY_NAME = owner/repo  (يُمرَّر لـ Vite كـ process.env)
 name: Deploy to GitHub Pages
 
 on:
@@ -44,20 +43,21 @@ jobs:
       - name: Build (npm run build) → dist/
         run: npm run build
         env:
-          REPOSITORY_NAME: ${{ secrets.FULL_REPO || vars.FULL_REPO || github.repository }}
+          REPOSITORY_NAME: ${{ secrets.REPOSITORY_NAME || vars.REPOSITORY_NAME || github.repository }}
           VITE_BASE: ${{ secrets.VITE_BASE || vars.VITE_BASE || format('/{0}/', github.event.repository.name) }}
 
       - name: تأكد أن مصدر النشر = مجلد dist
         run: |
           test -d dist || { echo "missing dist/"; exit 1; }
           test -f dist/index.html || { echo "missing dist/index.html"; exit 1; }
+          test -f dist/nawa_logo.png || { echo "missing public → dist/nawa_logo.png"; exit 1; }
           echo "حجم dist:" && du -sh dist
           echo "أهم الملفات:" && ls -la dist
 
-      - name: Verify dist is production (not /src/main.jsx)
+      - name: Verify dist is production (not dev main.jsx)
         run: |
-          if grep -qF "/src/main" dist/index.html; then
-            echo "FATAL: dist/index.html still has dev /src/main — use npm run build output only on Pages."
+          if grep -qE "main\.jsx" dist/index.html; then
+            echo "FATAL: dist/index.html still references .jsx — deploy must use vite build only."
             exit 1
           fi
           echo "OK: production bundle in dist/index.html"
