@@ -1,5 +1,13 @@
-# بناء Vite ونشر مجلد dist إلى GitHub Pages
-# الإعداد: Repository → Settings → Pages → Build and deployment: GitHub Actions
+# بناء Vite (dist) ونشره — لا تستخدم «Deploy from a branch» لأن index.html في الريبو يشير إلى /src/main.jsx
+# ويُفشل على Pages (404). المطلوب: نشر dist بعد npm run build فقط.
+#
+# GitHub: Settings → Pages → Build and deployment: Source = GitHub Actions (ليس «Deploy from a branch»)
+# بعد أول دفع ينجح: الصفحة على https://<user>.github.io/<اسم-الريبو>/
+#
+# متغيّرات (اختياري) — Settings → Secrets and variables → Actions
+#   لا تبدأ أسماء Secrets بـ GITHUB_ (محجوز لدى GitHub)
+#   • Variables أو Secrets: VITE_BASE = مثلاً /NAWA/  |  FULL_REPO = owner/name (لتجاوز الريبو الافتراضي)
+#   • السر/المتغير FULL_REPO يوضع في process.env باسم GITHUB_REPOSITORY للمكوّن.
 name: Deploy to GitHub Pages
 
 on:
@@ -35,7 +43,17 @@ jobs:
       - name: Build (npm run build)
         run: npm run build
         env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          REPOSITORY_NAME: ${{ secrets.FULL_REPO || vars.FULL_REPO || github.repository }}
+          VITE_BASE: ${{ secrets.VITE_BASE || vars.VITE_BASE || format('/{0}/', github.event.repository.name) }}
+
+      - name: Verify dist is production (not /src/main.jsx)
+        run: |
+          if grep -qF "/src/main" dist/index.html; then
+            echo "FATAL: dist/index.html still has dev /src/main — use npm run build output only on Pages."
+            exit 1
+          fi
+          echo "OK: production bundle in dist/index.html"
+          grep -E "<script" dist/index.html | head -5
 
       - name: Upload dist to GitHub Pages
         uses: actions/upload-pages-artifact@v3
