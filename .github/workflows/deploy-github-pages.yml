@@ -1,6 +1,8 @@
-# البناء: npm run build → ينتج dist/
-# النشر: upload-pages-artifact يرفع **محتويات dist/ فقط** — deploy يسحب نفس الأرشيف (لا جذر الريبو).
-# لا تستخدم «Deploy from a branch» (index.html المصدر يشير إلى /src/main.jsx = 404).
+# البناء: npm run build → ينتج dist/ (يفشل تلقائياً إن بقي main.jsx في dist بفضل scripts/verify-pages-dist.mjs)
+# النشر: upload-pages-artifact يرفع **محتويات dist/ فقط** — التصفح يقرأ /assets/index-*.js لا main.jsx
+#
+# إن ظهر 404 لـ main.jsx: الصفحة المُعروضة ليست dist — اذهب **Settings → Pages** وعطّل «Deploy from a branch» واختر **GitHub Actions** فقط.
+# لا تستخدم «Deploy from a branch» (index.html المصدر يبقى يشير إلى /src/main.jsx = 404).
 #
 # GitHub: Settings → Pages → Build and deployment: Source = GitHub Actions (ليس «Deploy from a branch»)
 # بعد أول دفع ينجح: الصفحة على https://<user>.github.io/<اسم-الريبو>/

@@ -6,7 +6,7 @@
   "homepage": "https://ammarshamea.github.io/NAWA/",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/verify-pages-dist.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
