@@ -22,3 +22,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Vite build — تُنشر فقط عبر GitHub Actions (أرشيف من مجلد dist)
+/dist

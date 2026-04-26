@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useI18n } from '../i18n/I18nContext';
+import { publicAsset } from '../utils/publicAsset';
 import { useTheme } from '../context/ThemeContext';
 
 /* ─── Canvas configs ─────────────────────────────────────────────────────── */
@@ -161,7 +162,7 @@ export default function HeroSection() {
             transition={{ duration: 0.85, delay: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
           >
             <img
-              src="/src/img/nawa_logo.png"
+              src={publicAsset('nawa_logo.png')}
               alt={t('a11y.logo')}
               style={{
                 width: 'clamp(200px, 32vw, 320px)',

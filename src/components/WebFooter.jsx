@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, MapPin, ArrowUpRight } from 'lucide-react';
 import GeoPattern from './GeoPattern';
 import { useI18n } from '../i18n/I18nContext';
+import { publicAsset } from '../utils/publicAsset';
 import { useRevealInView } from '../utils/useRevealInView';
 
 const NAV_COLS = [
@@ -70,7 +71,7 @@ export default function WebFooter({ onNav }) {
         <motion.div className="web-footer-grid__intro" variants={fadeUp}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, flexDirection: 'row' }}>
             <img
-              src="/src/img/nawa_logo.png"
+              src={publicAsset('nawa_logo.png')}
               alt={t('a11y.logo')}
               style={{ width: 44, height: 44, objectFit: 'contain', flexShrink: 0 }}
             />

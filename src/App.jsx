@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useI18n } from './i18n/I18nContext';
+import { publicAsset } from './utils/publicAsset';
 import HeroSection from './slides/HeroSection';
 import MissionVisionSlide from './slides/MissionVisionSlide';
 import ValuesSlide from './slides/ValuesSlide';
@@ -83,7 +84,7 @@ export default function App() {
       >
         <button type="button" className="navbar-logo" onClick={() => goToSection('hero')}>
           <img
-            src="/src/img/nawa_logo.png"
+            src={publicAsset('nawa_logo.png')}
             alt={t('a11y.logo')}
             style={{ width: 38, height: 38, objectFit: 'contain' }}
           />
